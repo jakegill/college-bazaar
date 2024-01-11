@@ -2,10 +2,12 @@ import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import Navbar from "@/components/Navbar";
 
 export default function Home() {
 	return (
 		<>
+			<Navbar />
 			<MaxWidthWrapper className=''>
 				<div className='flex flex-col'>
 					<div className='mt-20 mb-10 text-center flex flex-col gap-4'>
@@ -59,13 +61,17 @@ export default function Home() {
 					<p>Quickly post items to sell to other students</p>
 				</li>
 				<li className='ml-20'>
-					<h2 className='text-slate-900 text-xl md:text-2xl font-bold'>Browse the Bazaar</h2>
+					<h2 className='text-slate-900 text-xl md:text-2xl font-bold'>
+						Browse the Bazaar
+					</h2>
 					<p>Look for unique items from your community</p>
 				</li>
-        <li className='ml-20'>
-          <h2 className='text-slate-900 text-xl md:text-2xl font-bold'>Make a Deal</h2>
-          <p>Directly message other students and negotiate a deal</p>
-        </li>
+				<li className='ml-20'>
+					<h2 className='text-slate-900 text-xl md:text-2xl font-bold'>
+						Make a Deal
+					</h2>
+					<p>Directly message other students and negotiate a deal</p>
+				</li>
 			</ul>
 		</>
 	);
