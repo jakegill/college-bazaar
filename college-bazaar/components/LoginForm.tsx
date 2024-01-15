@@ -1,47 +1,30 @@
-"use client"
+"use client";
 import { useState } from "react";
 import { buttonVariants } from "./ui/button";
 import Link from "next/link";
 
 
 export default function LoginForm() {
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
 	const [error, setError] = useState("");
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 
-        try {
-            const res = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({email, password})
-            });
-
-            if (!res.ok) {
-                throw new Error(res.statusText);
-            }
-
-            const response = await res.json();
-            console.log(response);
-
-        } catch (error) {
-            setError((error as Error).message);
-        }
-		
+		try {
+		} catch (error) {
+			setError((error as Error).message);
+		}
 	};
 
 	return (
-		<div className='w-full max-w-xs mx-auto my-20'>
+		<div className='w-full max-w-md min-w-xs mx-auto my-10'>
 			<form
 				className='bg-white shadow-md rounded px-8 pt-6 pb-8 mx-auto'
 				onSubmit={handleSubmit}
-                onClick={() => setError('')}
+				onClick={() => setError("")}
 			>
 				<div className='mb-3'>
+					<h2 className='text-xl mb-5'>Log in</h2>
 					<label
 						className='block text-zinc-700 text-sm mb-1'
 						htmlFor='username'
@@ -53,9 +36,8 @@ export default function LoginForm() {
 						id='email'
 						type='email'
 						placeholder=''
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
 					/>
+
 					<label
 						className='block text-zinc-700 text-sm mb-1'
 						htmlFor='password'
@@ -67,8 +49,6 @@ export default function LoginForm() {
 						id='password'
 						type='password'
 						placeholder=''
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
 					/>
 				</div>
 				<div className='flex flex-col gap-2'>
@@ -81,12 +61,16 @@ export default function LoginForm() {
 					>
 						Sign in
 					</button>
-					<div className="flex gap-2">
-						<p className="text-sm text-zinc-700">Dont have an account?</p>
-						<Link className="text-sm text-blue-600 underline"href='/register'>Sign up</Link>
-                        
-                    </div>
-                    {error !== '' ? <p className="text-red-500">{error}</p> : null}
+					<div className='flex gap-2'>
+						<p className='text-sm text-zinc-700'>Dont have an account?</p>
+						<Link
+							className='text-sm text-blue-600 underline'
+							href='/auth/register'
+						>
+							Sign up
+						</Link>
+					</div>
+					{error !== "" ? <p className='text-red-500'>{error}</p> : null}
 				</div>
 			</form>
 		</div>

@@ -1,110 +1,157 @@
 "use client";
-import { useState } from "react";
 import { buttonVariants } from "./ui/button";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
 import Link from "next/link";
-import { matchingPasswords } from "@/lib/utils";
+
+const registerSchema = z
+	.object({
+		firstName: z
+			.string()
+			.min(2, "First name must contain at least 2 characters.")
+			.max(30, "First name must contain at most 30 characters.")
+			.regex(new RegExp("^[a-zA-Z]+$"), "No special characters allowed."),
+		lastName: z
+			.string()
+			.min(2, "Last name must contain at least 2 characters.")
+			.max(30, "Last name must contain at most 30 characters.")
+			.regex(new RegExp("^[a-zA-Z]+$"), "No special characters allowed."),
+		email: z.string().email("Please enter a valid email address."),
+		password: z
+			.string()
+			.min(6, "Password should contain at least 6 characters.")
+			.max(30, "Password should contain at most 30 characters."),
+		confirmPassword: z
+			.string()
+			.min(6, "Password should contain at least 6 characters.")
+			.max(30, "Password should contain at most 30 characters."),
+	})
+	.refine((data) => data.password === data.confirmPassword, {
+		message: "Passwords do not match",
+		path: ["confirmPassword"],
+	});
+
+type InputType = z.infer<typeof registerSchema>;
 
 export default function RegisterForm() {
-	const [email, setEmail] = useState("");
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
-	const [confirmPassword, setConfirmPassword] = useState("");
-	const [error, setError] = useState("");
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<InputType>({ resolver: zodResolver(registerSchema) });
 
-	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-
-        if (!matchingPasswords(password, confirmPassword)) {
-            setError("Passwords do not match");
-            return;
-        }
-
-        try {
-            const res = await fetch('/api/auth/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({email, username, password})
-            });
-
-            if (!res.ok) {
-                throw new Error(res.statusText);
-            }
-
-            const response = await res.json();
-            console.log(response);
-
-        } catch (error) {
-            setError((error as Error).message);
-        }
-		
+	const registerUser: SubmitHandler<InputType> = async (formData) => {
+		console.log(formData);
 	};
 
 	return (
-		<div className='w-full max-w-xs mx-auto my-20'>
+		<div className='w-full max-w-md min-w-xs mx-auto my-10'>
 			<form
 				className='bg-white shadow-md rounded px-8 pt-6 pb-8 mx-auto'
-				onSubmit={handleSubmit}
-                onClick={() => setError('')}
+				onSubmit={handleSubmit(registerUser)}
 			>
 				<div className='mb-3'>
-					<label
-						className='block text-zinc-700 text-sm mb-1'
-						htmlFor='username'
-					>
-						Email
-					</label>
-					<input
-						className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-3'
-						id='email'
-						type='email'
-						placeholder=''
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
-					/>
-					<label
-						className='block text-zinc-700 text-sm mb-1'
-						htmlFor='username'
-					>
-						Username
-					</label>
-					<input
-						className='shadow appearance-none border rounded w-full py-2 px-3 text-zinc-700 leading-tight focus:outline-none focus:shadow-outline mb-3'
-						id='username'
-						type='text'
-						placeholder=''
-						value={username}
-						onChange={(e) => setUsername(e.target.value)}
-					/>
-					<label
-						className='block text-zinc-700 text-sm mb-1'
-						htmlFor='password'
-					>
-						Password
-					</label>
-					<input
-						className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline'
-						id='password'
-						type='password'
-						placeholder=''
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-					/>
-					<label
-						className='block text-zinc-700 text-sm mb-1'
-						htmlFor='confirmPassword'
-					>
-						Confirm Password
-					</label>
-					<input
-						className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline'
-						id='confirmPassword'
-						type='password'
-						placeholder=''
-						value={confirmPassword}
-						onChange={(e) => setConfirmPassword(e.target.value)}
-					/>
+					<h2 className='text-xl mb-5'>Register</h2>
+					<div className='flex gap-2 mb-2'>
+						<div>
+							<label
+								className='block text-zinc-700 text-sm mb-1'
+								htmlFor='firstName'
+							>
+								First name
+							</label>
+							<input
+								{...register("firstName")}
+								className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+								id='firstName'
+								type='text'
+								placeholder=''
+							/>
+							{errors.firstName ? (
+								<p className='text-red-500 text-xs'>
+									{errors.firstName.message}
+								</p>
+							) : null}
+						</div>
+						<div>
+							<label
+								className='block text-zinc-700 text-sm mb-1'
+								htmlFor='lastName'
+							>
+								Last name
+							</label>
+							<input
+								{...register("lastName")}
+								className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+								id='lastName'
+								type='text'
+								placeholder=''
+							/>
+							{errors.lastName ? (
+								<p className='text-red-500 text-xs'>
+									{errors.lastName.message}
+								</p>
+							) : null}
+						</div>
+					</div>
+					<div className='mb-2'>
+						<label
+							className='block text-zinc-700 text-sm mb-1'
+							htmlFor='username'
+						>
+							Email
+						</label>
+						<input
+							{...register("email")}
+							className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+							id='email'
+							type='email'
+							placeholder=''
+						/>
+						{errors.email ? (
+							<p className='text-red-500 text-xs'>{errors.email.message}</p>
+						) : null}
+					</div>
+					<div className='mb-2'>
+						<label
+							className='block text-zinc-700 text-sm mb-1'
+							htmlFor='password'
+						>
+							Password
+						</label>
+						<input
+							{...register("password")}
+							className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+							id='password'
+							type='password'
+							placeholder=''
+						/>
+						{errors.password ? (
+							<p className='text-red-500 text-xs'>{errors.password.message}</p>
+						) : null}
+					</div>
+					<div className='mb-2'>
+						<label
+							className='block text-zinc-700 text-sm mb-1'
+							htmlFor='confirmPassword'
+						>
+							Confirm Password
+						</label>
+						<input
+							{...register("confirmPassword")}
+							className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+							id='confirmPassword'
+							type='password'
+							placeholder=''
+						/>
+						{errors.confirmPassword ? (
+							<p className='text-red-500 text-xs mb-2'>
+								{errors.confirmPassword.message}
+							</p>
+						) : null}
+					</div>
 				</div>
 				<div className='flex flex-col gap-2'>
 					<button
@@ -116,12 +163,15 @@ export default function RegisterForm() {
 					>
 						Create Account
 					</button>
-					<div className="flex gap-2">
-						<p className="text-sm text-zinc-700">Already have an account?</p>
-						<Link className="text-sm text-blue-600 underline"href='/login'>Sign in</Link>
-                        
-                    </div>
-                    {error !== '' ? <p className="text-red-500">{error}</p> : null}
+					<div className='flex gap-2'>
+						<p className='text-sm text-zinc-700'>Already have an account?</p>
+						<Link
+							className='text-sm text-blue-600 underline'
+							href='/auth/login'
+						>
+							Sign in
+						</Link>
+					</div>
 				</div>
 			</form>
 		</div>

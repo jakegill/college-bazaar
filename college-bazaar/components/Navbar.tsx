@@ -12,7 +12,7 @@ export default function Navbar() {
 					</h2>
 					<div className='flex gap-2'>
 						<Link
-							href='/login'
+							href='/auth/login'
 							className={buttonVariants({
 								variant: "outline",
 								size: "sm",
@@ -22,7 +22,7 @@ export default function Navbar() {
 							Sign in
 						</Link>
 						<Link
-                            href='/register'
+                            href='/auth/register'
 							className={buttonVariants({
 								size: "sm",
 								className: "text-xs",
