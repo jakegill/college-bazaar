@@ -13,13 +13,14 @@ export const authOptions = {
                 try {
                     return null;
                 } catch (error) {
-                    throw new Error(error)
+                    throw new Error(String(error));
                 }
             }
         })
     ],
     pages: {
         signIn: "/login",
+        register: "/register",
     }
 }
 

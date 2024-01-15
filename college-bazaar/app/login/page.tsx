@@ -1,7 +1,11 @@
-export default function SignIn() {
+import Navbar from "@/components/Navbar"
+import LoginForm from "@/components/LoginForm"
+
+export default function Login() {
     return (
         <div>
-            <h1>Sign In</h1>
+            <Navbar/>
+            <LoginForm/>
         </div>
     )
 }
