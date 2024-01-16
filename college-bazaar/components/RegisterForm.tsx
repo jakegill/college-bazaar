@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import Link from "next/link";
+import { registerUser } from "@/lib/actions/auth";
 
 const registerSchema = z
 	.object({
@@ -28,7 +29,7 @@ const registerSchema = z
 			.min(6, "Password should contain at least 6 characters.")
 			.max(30, "Password should contain at most 30 characters."),
 	})
-	.refine((data) => data.password === data.confirmPassword, {
+	.refine(data => data.password === data.confirmPassword, {
 		message: "Passwords do not match",
 		path: ["confirmPassword"],
 	});
@@ -42,15 +43,22 @@ export default function RegisterForm() {
 		formState: { errors },
 	} = useForm<InputType>({ resolver: zodResolver(registerSchema) });
 
-	const registerUser: SubmitHandler<InputType> = async (formData) => {
-		console.log(formData);
+	const saveUser: SubmitHandler<InputType> = async (formData) => {
+		const {confirmPassword, ...user} = formData;
+		try {
+			console.log("Attempt")
+			const res = await registerUser(user);
+			console.log("success", res)
+		} catch (error) {
+			console.log(error)
+		}
 	};
 
 	return (
 		<div className='w-full max-w-md min-w-xs mx-auto my-10'>
 			<form
 				className='bg-white shadow-md rounded px-8 pt-6 pb-8 mx-auto'
-				onSubmit={handleSubmit(registerUser)}
+				onSubmit={handleSubmit(saveUser)}
 			>
 				<div className='mb-3'>
 					<h2 className='text-xl mb-5'>Register</h2>
