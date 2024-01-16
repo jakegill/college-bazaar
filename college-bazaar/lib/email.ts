@@ -32,7 +32,7 @@ export async function sendEmail({
             subject,
             html: body
         });
-        console.log("Confirmation email sent. ", res);
+        console.log("Confirmation email sent. ", sendEmailResult);
     }
 
 }

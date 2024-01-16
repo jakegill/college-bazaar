@@ -99,9 +99,9 @@ export default function LoginForm() {
 							Sign up
 						</Link>
 					</div>
-					<div className='flex gap-2'>
+					{/* <div className='flex gap-2'>
 						<p className='text-sm text-zinc-700'>Forgot your password?</p>
-					</div>
+					</div> */}
 				</div>
 			</form>
 		</div>

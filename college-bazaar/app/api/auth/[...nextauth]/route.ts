@@ -41,6 +41,10 @@ export const authOptions: AuthOptions = {
 			if (user) token.user = user as User;
 			return token;
 		},
+	},
+	session: {
+		strategy: "jwt",
+		maxAge: 24 * 60 * 60, // 24 hours
 	}
 };
 
