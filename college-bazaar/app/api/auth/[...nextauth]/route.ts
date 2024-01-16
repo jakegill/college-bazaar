@@ -1,9 +1,14 @@
-import NextAuth from "next-auth";
+import NextAuth from "next-auth/next";
+import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/lib/prisma";
-import * as bcrypt from "bcrypt";
+import bcrypt from "bcrypt";
+import { User } from "@prisma/client";
 
-export const authOptions = {
+export const authOptions: AuthOptions = {
+	pages: {
+		signIn: "/auth/login",
+	},
 	providers: [
 		CredentialsProvider({
 			name: "Credentials",
@@ -19,17 +24,24 @@ export const authOptions = {
 				});
 				if (!user) throw new Error("User not found.");
 
-				const isValidPassword = bcrypt.compare(
-					credentials.password,
-					user.password
-				);
+				const isValidPassword = await bcrypt.compare(credentials?.password as string, user.password)
 				if (!isValidPassword) throw new Error("Invalid credentials.");
 
-                const {password, ...rest} = user;
-                return rest;
+				const { password, ...userWithoutPassword } = user;
+				return userWithoutPassword;
 			},
 		}),
 	],
+	callbacks: {
+		async session({token, session}) { 
+			session.user = token.user as User;
+			return session;
+		},
+		async jwt({token, user}) {
+			if (user) token.user = user as User;
+			return token;
+		},
+	}
 };
 
 const handler = NextAuth(authOptions);

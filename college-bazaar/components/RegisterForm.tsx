@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import Link from "next/link";
-import { registerUser } from "@/lib/actions/auth";
+import { registerUser } from "@/lib/actions/auth.server";
 
 const registerSchema = z
 	.object({
@@ -29,7 +29,7 @@ const registerSchema = z
 			.min(6, "Password should contain at least 6 characters.")
 			.max(30, "Password should contain at most 30 characters."),
 	})
-	.refine(data => data.password === data.confirmPassword, {
+	.refine((data) => data.password === data.confirmPassword, {
 		message: "Passwords do not match",
 		path: ["confirmPassword"],
 	});
@@ -44,13 +44,12 @@ export default function RegisterForm() {
 	} = useForm<InputType>({ resolver: zodResolver(registerSchema) });
 
 	const saveUser: SubmitHandler<InputType> = async (formData) => {
-		const {confirmPassword, ...user} = formData;
+		const { confirmPassword, ...user } = formData;
 		try {
-			console.log("Attempt")
 			const res = await registerUser(user);
-			console.log("success", res)
+			console.log("success", res);
 		} catch (error) {
-			console.log(error)
+			console.log(error);
 		}
 	};
 

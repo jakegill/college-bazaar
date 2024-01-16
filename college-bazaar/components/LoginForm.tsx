@@ -1,18 +1,39 @@
 "use client";
-import { useState } from "react";
 import { buttonVariants } from "./ui/button";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
 
+const loginSchema = z.object({
+	email: z.string().email("Please enter a valid email address."),
+	password: z
+		.string()
+		.min(6, "Password should contain at least 6 characters.")
+		.max(30, "Password should contain at most 30 characters."),
+});
+
+type InputType = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
-	const [error, setError] = useState("");
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<InputType>({ resolver: zodResolver(loginSchema) });
 
-	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-
+	const loginUser: SubmitHandler<InputType> = async (formData) => {
 		try {
+			const res = await signIn("credentials", {
+				redirect: false,
+				username: formData.email,
+				password: formData.password,
+			});
 		} catch (error) {
-			setError((error as Error).message);
+			console.log(error);
 		}
 	};
 
@@ -20,36 +41,44 @@ export default function LoginForm() {
 		<div className='w-full max-w-md min-w-xs mx-auto my-10'>
 			<form
 				className='bg-white shadow-md rounded px-8 pt-6 pb-8 mx-auto'
-				onSubmit={handleSubmit}
-				onClick={() => setError("")}
+				onSubmit={handleSubmit(loginUser)}
 			>
 				<div className='mb-3'>
 					<h2 className='text-xl mb-5'>Log in</h2>
-					<label
-						className='block text-zinc-700 text-sm mb-1'
-						htmlFor='username'
-					>
-						Email
-					</label>
-					<input
-						className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-3'
-						id='email'
-						type='email'
-						placeholder=''
-					/>
-
-					<label
-						className='block text-zinc-700 text-sm mb-1'
-						htmlFor='password'
-					>
-						Password
-					</label>
-					<input
-						className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline'
-						id='password'
-						type='password'
-						placeholder=''
-					/>
+					<div className='mb-3'>
+						<label
+							className='block text-zinc-700 text-sm mb-1'
+							htmlFor='username'
+						>
+							Email
+						</label>
+						<input
+							{...register("email")}
+							className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+							id='email'
+							type='email'
+						/>
+						{errors.email ? (
+							<p className='text-red-500 text-xs'>{errors.email.message}</p>
+						) : null}
+					</div>
+					<div className='mb-3'>
+						<label
+							className='block text-zinc-700 text-sm mb-1'
+							htmlFor='password'
+						>
+							Password
+						</label>
+						<input
+							{...register("password")}
+							className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+							id='password'
+							type='password'
+						/>
+						{errors.password ? (
+							<p className='text-red-500 text-xs'>{errors.password.message}</p>
+						) : null}
+					</div>
 				</div>
 				<div className='flex flex-col gap-2'>
 					<button
@@ -70,7 +99,9 @@ export default function LoginForm() {
 							Sign up
 						</Link>
 					</div>
-					{error !== "" ? <p className='text-red-500'>{error}</p> : null}
+					<div className='flex gap-2'>
+						<p className='text-sm text-zinc-700'>Forgot your password?</p>
+					</div>
 				</div>
 			</form>
 		</div>

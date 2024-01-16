@@ -3,8 +3,10 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
+import { sendEmail } from "@/lib/email";
 
-export default function Home() {
+export default async function Home() {
+
 	return (
 		<>
 			<Navbar />
