@@ -7,6 +7,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 const loginSchema = z.object({
 	email: z.string().email("Please enter a valid email address."),
@@ -19,6 +20,9 @@ const loginSchema = z.object({
 type InputType = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
+
+	const router = useRouter();
+
 	const {
 		register,
 		handleSubmit,
@@ -32,6 +36,11 @@ export default function LoginForm() {
 				username: formData.email,
 				password: formData.password,
 			});
+
+			if (res.ok) {
+				router.push("/dashboard");
+			}
+
 		} catch (error) {
 			console.log(error);
 		}

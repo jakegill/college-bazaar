@@ -47,6 +47,22 @@ model User {
   sessions      Session[]
 }
 
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  price       Float
+  image       String
+  userId      String?
+  createdAt   DateTime?
+}
+
+model ShoppingCart {
+  id         String   @id @default(cuid())
+  userId      String
+  productId   String
+}
+
 model VerificationToken {
   identifier String
   token      String   @unique

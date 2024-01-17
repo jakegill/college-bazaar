@@ -14,11 +14,11 @@ export default function Navbar() {
 					<h2 className='md:text-xl font-bold text-blue-600 text-sm'>
 						College Bazaar
 					</h2>
-					<div className='flex gap-2'>
+					<div className='flex gap-2 items-center'>
 						{session && session.user ? (
 							<>
 								<p className="text-xs">{`${session.user.firstName} ${session.user.lastName}`}</p>
-								<Link href='/api/auth/signout'>Sign Out</Link>
+								<Link className={buttonVariants({variant: "outline", size: "sm", className:"text-xs"})} href='/api/auth/signout'>Sign Out</Link>
 							</>
 						) : (
 							<>

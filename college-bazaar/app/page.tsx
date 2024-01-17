@@ -3,9 +3,8 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
-import { sendEmail } from "@/lib/email";
 
-export default async function Home() {
+export default  function Home() {
 
 	return (
 		<>

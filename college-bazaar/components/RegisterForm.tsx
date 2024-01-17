@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import Link from "next/link";
 import { registerUser } from "@/lib/actions/auth.server";
+import { useRouter } from "next/navigation";
 
 const registerSchema = z
 	.object({
@@ -37,6 +38,9 @@ const registerSchema = z
 type InputType = z.infer<typeof registerSchema>;
 
 export default function RegisterForm() {
+
+	const router = useRouter();
+
 	const {
 		register,
 		handleSubmit,
@@ -47,7 +51,7 @@ export default function RegisterForm() {
 		const { confirmPassword, ...user } = formData;
 		try {
 			const res = await registerUser(user);
-			console.log("success", res);
+			router.push("/auth/login");
 		} catch (error) {
 			console.log(error);
 		}
